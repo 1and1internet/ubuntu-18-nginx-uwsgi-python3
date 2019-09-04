@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd $HOMEDIR
+. ${VIRTENV}/bin/activate
+
+WSGIFILE=uwsgi.py
+[ -f passenger_wsgi.py ] && WSGIFILE=passenger_wsgi.py
+
+uwsgi --socket 127.0.0.1:3031 --wsgi-file $WSGIFILE --master --processes 4 --threads 2
+# --stats 127.0.0.1:9191

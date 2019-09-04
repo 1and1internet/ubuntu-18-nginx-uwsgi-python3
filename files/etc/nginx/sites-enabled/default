@@ -1,0 +1,53 @@
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# http://wiki.nginx.org/Pitfalls
+# http://wiki.nginx.org/QuickStart
+# http://wiki.nginx.org/Configuration
+#
+# Generally, you will want to move this file somewhere, and start with a clean
+# file but keep this around for reference. Or just disable in sites-enabled.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+# Default server configuration
+#
+server {
+	listen 8080 default_server;
+	listen [::]:8080 default_server;
+
+    # If block for setting the time for the logfile
+    if ($time_iso8601 ~ "^(\d{4})-(\d{2})-(\d{2})") {
+        set $year $1;
+        set $month $2;
+        set $day $3;
+    }
+
+	set $http_x_forwarded_for_filt $http_x_forwarded_for;
+	if ($http_x_forwarded_for_filt ~ ([0-9]+\.[0-9]+\.[0-9]+\.)[0-9]+) {
+		set $http_x_forwarded_for_filt $1???;
+	}
+
+    # Now set the logfile inc. Hostname
+    access_log /var/log/nginx/$hostname-access-$year-$month-$day.log openshift_log;
+
+	# SSL configuration
+	#
+	# listen 8443 ssl default_server;
+	# listen [::]:8443 ssl default_server;
+
+
+	root /var/www/public;
+
+	# Add index.php to the list if you are using PHP
+	index index.html index.htm index.nginx-debian.html;
+
+	server_name _;
+	
+	location / {
+	    include uwsgi_params;
+	    uwsgi_pass 127.0.0.1:3031;
+	}
+
+}
