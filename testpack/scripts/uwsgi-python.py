@@ -2,7 +2,6 @@
 
 import unittest
 from testpack_helper_library.unittests.dockertests import Test1and1Common
-import time
 
 
 class Test1and1Image(Test1and1Common):
@@ -88,10 +87,6 @@ class Test1and1Image(Test1and1Common):
 
     def test_nginx_common_package(self):
         self.assertPackageIsInstalled("nginx-common")
-
-    def test_var_run_nginx_pid(self):
-        time.sleep(10)
-        self.file_mode_test("/var/run/nginx.pid", "-rw-r--r--")
 
     def test_docker_logs(self):
         expected_log_lines = [
