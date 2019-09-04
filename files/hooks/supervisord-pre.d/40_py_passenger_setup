@@ -24,14 +24,14 @@ if [ $EMPTY == 'true' ]; then
 
     rm -f /var/www/alockfile
 else
-    echo "Upgrading default python modules"
+    echo "Ensure uwsgi is installed"
     (
         if flock -n 9; then
-            echo 'Got lock - upgrading virtual environment'
+            echo 'Got lock - checking uwsgi'
             source ${VIRTENV}/bin/activate
             python --version
             pip --version
-            pip install --no-cache-dir --upgrade pip mysqlclient flask uwsgi
+            pip list | grep -i uwsgi || pip install --no-cache-dir uwsgi
         else
             echo 'No lock, exiting'
             exit
